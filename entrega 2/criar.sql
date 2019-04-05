@@ -3,7 +3,7 @@
 --
 -- Text encoding used: System
 --
-PRAGMA foreign_keys = off;
+PRAGMA foreign_keys = on;
 BEGIN TRANSACTION;
 
 -- Table: AlugFilme
@@ -115,7 +115,7 @@ CREATE TABLE Filme (
     anoLancamento INTEGER,
     preco         REAL     CONSTRAINT nn_filme_preco NOT NULL
                            CONSTRAINT check_filme_preco CHECK (preco > 0),
-    idColecao     INTEGER  CONSTRAINT fk_filme_idcolecao REFERENCES Coleção (idColeção) 
+    idColecao     INTEGER  CONSTRAINT fk_filme_idcolecao REFERENCES Colecao (idColecao) 
 );
 
 
@@ -135,13 +135,13 @@ DROP TABLE IF EXISTS Horario;
 
 CREATE TABLE Horario (
     idHorario  INTEGER PRIMARY KEY,
-    diaSemana  TEXT    CONSTRAINT check_horario_diasemana CHECK ( (diaSemana = "SEGUNDA-FEIRA" OR 
-                                                                   diaSemana = "TERCA-FEIRA" OR 
-                                                                   diaSemana = "QUARTA-FEIRA" OR 
-                                                                   diaSemana = "QUINTA-FEIRA" OR 
-                                                                   diaSemana = "SEXTA-FEIRA" OR 
-                                                                   diaSemana = "SABADO" OR 
-                                                                   diaSemana = "DOMINGO") ),
+    diaSemana  TEXT    CONSTRAINT check_horario_diasemana CHECK ( (diaSemana = 'SEGUNDA-FEIRA' OR 
+                                                                   diaSemana = 'TERCA-FEIRA' OR 
+                                                                   diaSemana = 'QUARTA-FEIRA' OR 
+                                                                   diaSemana = 'QUINTA-FEIRA' OR 
+                                                                   diaSemana = 'SEXTA-FEIRA' OR 
+                                                                   diaSemana = 'SABADO' OR 
+                                                                   diaSemana = 'DOMINGO') ),
     horaInicio TIME,
     horaFim    TIME,
     CONSTRAINT unique_horario_dia_horas UNIQUE (
