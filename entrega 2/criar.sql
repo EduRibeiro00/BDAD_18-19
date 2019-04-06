@@ -1,17 +1,19 @@
 --
--- File generated with SQLiteStudio v3.2.1 on sex abr 5 15:57:30 2019
+-- File generated with SQLiteStudio v3.2.1 on sáb abr 6 01:33:46 2019
 --
 -- Text encoding used: System
 --
-PRAGMA foreign_keys = on;
+PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
 
 -- Table: AlugFilme
 DROP TABLE IF EXISTS AlugFilme;
 
 CREATE TABLE AlugFilme (
-    idAluguer INTEGER CONSTRAINT fk_alugfilme_idaluguer REFERENCES Aluguer (idAluguer),
-    idFilme   INTEGER CONSTRAINT fk_alugfilme_idfilme REFERENCES Filme,
+    idAluguer INTEGER CONSTRAINT fk_alugfilme_idaluguer REFERENCES Aluguer (idAluguer) ON DELETE CASCADE
+                                                                                       ON UPDATE CASCADE,
+    idFilme   INTEGER CONSTRAINT fk_alugfilme_idfilme REFERENCES Filme (idFilme) ON DELETE CASCADE
+                                                                                 ON UPDATE CASCADE,
     PRIMARY KEY (
         idAluguer,
         idFilme
@@ -26,30 +28,17 @@ CREATE TABLE Aluguer (
     idAluguer    INTEGER PRIMARY KEY,
     dataAluguer  DATE    CONSTRAINT nn_alugues_dataaluguer NOT NULL,
     precoAluguer REAL,
-    idLoja       INTEGER CONSTRAINT fk_aluguer_idloja REFERENCES Loja (idLoja),
-    idCliente    INTEGER CONSTRAINT fk_aluguer_idcliente REFERENCES Cliente (idPessoa) 
-);
-
-
--- Table: AluguerAtual
-DROP TABLE IF EXISTS AluguerAtual;
-
-CREATE TABLE AluguerAtual (
-    idAluguer  INTEGER PRIMARY KEY
-                       CONSTRAINT fk_alugueratual_idaluguer REFERENCES Aluguer (idAluguer),
-    dataLimite DATE    CONSTRAINT nn_alugueratual_datalimite NOT NULL
-);
-
-
--- Table: AluguerPassado
-DROP TABLE IF EXISTS AluguerPassado;
-
-CREATE TABLE AluguerPassado (
-    idAluguer   INTEGER PRIMARY KEY
-                        CONSTRAINT fk_aluguerpassado_idaluguer REFERENCES Aluguer (idAluguer),
-    dataLimite  DATE    CONSTRAINT nn_aluguerpassado_datalimite NOT NULL,
-    dataEntrega DATE    CONSTRAINT nn_aluguerpassado_dataentrega NOT NULL,
-    CONSTRAINT check_aluguerpassado_datas CHECK (dataLimite >= dataEntrega) 
+    idLoja       INTEGER CONSTRAINT fk_aluguer_idloja REFERENCES Loja (idLoja) ON DELETE CASCADE
+                                                                               ON UPDATE CASCADE,
+    idCliente    INTEGER CONSTRAINT fk_aluguer_idcliente REFERENCES Cliente (idPessoa) ON DELETE CASCADE
+                                                                                       ON UPDATE CASCADE,
+    dataLimite   DATE    CONSTRAINT nn_aluguer_datalimite NOT NULL,
+    dataEntrega  DATE,
+    CONSTRAINT check_aluguer_datas CHECK ( ( (dataLimite >= dataEntrega AND 
+                                              dataEntrega >= dataAluguer AND 
+                                              dataLimite >= dataAluguer) OR 
+                                             (dataLimite >= dataAluguer AND 
+                                              dataEntrega IS NULL) ) ) 
 );
 
 
@@ -58,8 +47,9 @@ DROP TABLE IF EXISTS Cliente;
 
 CREATE TABLE Cliente (
     idPessoa   INTEGER PRIMARY KEY
-                       CONSTRAINT fk_cliente_idpessoa REFERENCES Pessoa (idPessoa),
-    dataAdesao DATE
+                       CONSTRAINT fk_cliente_idpessoa REFERENCES Pessoa (idPessoa) ON DELETE CASCADE
+                                                                                   ON UPDATE CASCADE,
+    dataAdesao DATE    CONSTRAINT nn_cliente_dataadesao NOT NULL
 );
 
 
@@ -68,8 +58,9 @@ DROP TABLE IF EXISTS ClienteGold;
 
 CREATE TABLE ClienteGold (
     idCliente      INTEGER PRIMARY KEY
-                           CONSTRAINT fk_clientegold_idpessoa REFERENCES Cliente (idPessoa),
-    dataSubscricao DATE
+                           CONSTRAINT fk_clientegold_idpessoa REFERENCES Cliente (idPessoa) ON DELETE CASCADE
+                                                                                            ON UPDATE CASCADE,
+    dataSubscricao DATE    CONSTRAINT nn_clientegold_datasubscricao NOT NULL
 );
 
 
@@ -78,8 +69,9 @@ DROP TABLE IF EXISTS ClienteSilver;
 
 CREATE TABLE ClienteSilver (
     idCliente      INTEGER PRIMARY KEY
-                           CONSTRAINT fk_clientesilver_idcliente REFERENCES Cliente (idPessoa),
-    dataSubscricao DATE
+                           CONSTRAINT fk_clientesilver_idcliente REFERENCES Cliente (idPessoa) ON DELETE CASCADE
+                                                                                               ON UPDATE CASCADE,
+    dataSubscricao DATE    CONSTRAINT nn_clientesilver_datasubscricao NOT NULL
 );
 
 
@@ -115,7 +107,8 @@ CREATE TABLE Filme (
     anoLancamento INTEGER,
     preco         REAL     CONSTRAINT nn_filme_preco NOT NULL
                            CONSTRAINT check_filme_preco CHECK (preco > 0),
-    idColecao     INTEGER  CONSTRAINT fk_filme_idcolecao REFERENCES Colecao (idColecao) 
+    idColecao     INTEGER  CONSTRAINT fk_filme_idcolecao REFERENCES Colecao (idColecao) ON DELETE SET NULL
+                                                                                        ON UPDATE CASCADE
 );
 
 
@@ -124,9 +117,11 @@ DROP TABLE IF EXISTS Funcionario;
 
 CREATE TABLE Funcionario (
     idPessoa INTEGER PRIMARY KEY
-                     CONSTRAINT fk_funcionario_idpessoa REFERENCES Pessoa (idPessoa),
-    salario  INTEGER,
-    idLoja   INTEGER CONSTRAINT fk_funcionario_idloja REFERENCES Loja (idLoja) 
+                     CONSTRAINT fk_funcionario_idpessoa REFERENCES Pessoa (idPessoa) ON DELETE CASCADE
+                                                                                     ON UPDATE CASCADE,
+    salario  INTEGER CONSTRAINT nn_funcionario_salario NOT NULL,
+    idLoja   INTEGER CONSTRAINT fk_funcionario_idloja REFERENCES Loja (idLoja) ON DELETE SET NULL
+                                                                               ON UPDATE CASCADE
 );
 
 
@@ -135,13 +130,13 @@ DROP TABLE IF EXISTS Horario;
 
 CREATE TABLE Horario (
     idHorario  INTEGER PRIMARY KEY,
-    diaSemana  TEXT    CONSTRAINT check_horario_diasemana CHECK ( (diaSemana = 'SEGUNDA-FEIRA' OR 
-                                                                   diaSemana = 'TERCA-FEIRA' OR 
-                                                                   diaSemana = 'QUARTA-FEIRA' OR 
-                                                                   diaSemana = 'QUINTA-FEIRA' OR 
-                                                                   diaSemana = 'SEXTA-FEIRA' OR 
-                                                                   diaSemana = 'SABADO' OR 
-                                                                   diaSemana = 'DOMINGO') ),
+    diaSemana  TEXT    CONSTRAINT check_horario_diasemana CHECK ( (diaSemana = "SEGUNDA-FEIRA" OR 
+                                                                   diaSemana = "TERCA-FEIRA" OR 
+                                                                   diaSemana = "QUARTA-FEIRA" OR 
+                                                                   diaSemana = "QUINTA-FEIRA" OR 
+                                                                   diaSemana = "SEXTA-FEIRA" OR 
+                                                                   diaSemana = "SABADO" OR 
+                                                                   diaSemana = "DOMINGO") ),
     horaInicio TIME,
     horaFim    TIME,
     CONSTRAINT unique_horario_dia_horas UNIQUE (
@@ -157,8 +152,10 @@ CREATE TABLE Horario (
 DROP TABLE IF EXISTS HorarioFunc;
 
 CREATE TABLE HorarioFunc (
-    idFuncionario INTEGER CONSTRAINT fk_horariofunc_idfuncionario REFERENCES Funcionario (idPessoa),
-    idHorario     INTEGER CONSTRAINT fk_horariofunc_idhorario REFERENCES Horario (idHorario),
+    idFuncionario INTEGER CONSTRAINT fk_horariofunc_idfuncionario REFERENCES Funcionario (idPessoa) ON DELETE CASCADE
+                                                                                                    ON UPDATE CASCADE,
+    idHorario     INTEGER CONSTRAINT fk_horariofunc_idhorario REFERENCES Horario (idHorario) ON DELETE CASCADE
+                                                                                             ON UPDATE CASCADE,
     PRIMARY KEY (
         idFuncionario,
         idHorario
@@ -170,8 +167,10 @@ CREATE TABLE HorarioFunc (
 DROP TABLE IF EXISTS HorarioLoja;
 
 CREATE TABLE HorarioLoja (
-    idLoja    INTEGER CONSTRAINT fk_horarioloja_idloja REFERENCES Loja (idLoja),
-    idHorario INTEGER CONSTRAINT fk_horarioloja_idhorario REFERENCES Horario (idHorario),
+    idLoja    INTEGER CONSTRAINT fk_horarioloja_idloja REFERENCES Loja (idLoja) ON DELETE CASCADE
+                                                                                ON UPDATE CASCADE,
+    idHorario INTEGER CONSTRAINT fk_horarioloja_idhorario REFERENCES Horario (idHorario) ON DELETE CASCADE
+                                                                                         ON UPDATE CASCADE,
     PRIMARY KEY (
         idLoja,
         idHorario
@@ -188,7 +187,8 @@ CREATE TABLE Loja (
                       CONSTRAINT nn_loja_local NOT NULL,
     telefone  INTEGER CONSTRAINT unique_loja_telefone UNIQUE,
     idGerente INTEGER CONSTRAINT unique_loja_idgerente UNIQUE
-                      CONSTRAINT fk_loja_idgerente REFERENCES Funcionario (idPessoa) 
+                      CONSTRAINT fk_loja_idgerente REFERENCES Funcionario (idPessoa) ON DELETE RESTRICT
+                                                                                     ON UPDATE CASCADE
                       CONSTRAINT nn_loja_idgerente NOT NULL
 );
 
@@ -209,8 +209,10 @@ CREATE TABLE Pessoa (
 DROP TABLE IF EXISTS Stock;
 
 CREATE TABLE Stock (
-    idLoja        INTEGER CONSTRAINT fk_stock_idloja REFERENCES Loja (idLoja),
-    idFilme       INTEGER CONSTRAINT fk_stock_idfilme REFERENCES Filme,
+    idLoja        INTEGER CONSTRAINT fk_stock_idloja REFERENCES Loja (idLoja) ON DELETE CASCADE
+                                                                              ON UPDATE CASCADE,
+    idFilme       INTEGER CONSTRAINT fk_stock_idfilme REFERENCES Filme (idFilme) ON DELETE CASCADE
+                                                                                 ON UPDATE CASCADE,
     numExemplares INTEGER CONSTRAINT check_stock_numexemplares CHECK (numExemplares > 0),
     PRIMARY KEY (
         idLoja,
