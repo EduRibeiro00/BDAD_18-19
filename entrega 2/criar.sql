@@ -1,9 +1,9 @@
 --
--- File generated with SQLiteStudio v3.2.1 on sáb abr 6 01:33:46 2019
+-- File generated with SQLiteStudio v3.2.1 on sï¿½b abr 6 01:33:46 2019
 --
 -- Text encoding used: System
 --
-PRAGMA foreign_keys = off;
+PRAGMA foreign_keys = on;
 BEGIN TRANSACTION;
 
 -- Table: AlugFilme
