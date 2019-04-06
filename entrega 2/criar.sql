@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.2.1 on s�b abr 6 01:33:46 2019
+-- File generated with SQLiteStudio v3.2.1 on s�b abr 6 12:19:33 2019
 --
 -- Text encoding used: System
 --
@@ -116,12 +116,13 @@ CREATE TABLE Filme (
 DROP TABLE IF EXISTS Funcionario;
 
 CREATE TABLE Funcionario (
-    idPessoa INTEGER PRIMARY KEY
-                     CONSTRAINT fk_funcionario_idpessoa REFERENCES Pessoa (idPessoa) ON DELETE CASCADE
-                                                                                     ON UPDATE CASCADE,
-    salario  INTEGER CONSTRAINT nn_funcionario_salario NOT NULL,
-    idLoja   INTEGER CONSTRAINT fk_funcionario_idloja REFERENCES Loja (idLoja) ON DELETE SET NULL
-                                                                               ON UPDATE CASCADE
+    idPessoa        INTEGER PRIMARY KEY
+                            CONSTRAINT fk_funcionario_idpessoa REFERENCES Pessoa (idPessoa) ON DELETE CASCADE
+                                                                                            ON UPDATE CASCADE,
+    salario         INTEGER CONSTRAINT nn_funcionario_salario NOT NULL,
+    idLoja          INTEGER CONSTRAINT fk_funcionario_idloja REFERENCES Loja (idLoja) ON DELETE SET NULL
+                                                                                      ON UPDATE CASCADE,
+    dataContratacao DATE    CONSTRAINT nn_funcionario_datacontratacao NOT NULL
 );
 
 
