@@ -1,9 +1,9 @@
 --
--- File generated with SQLiteStudio v3.2.1 on dom abr 7 15:26:13 2019
+-- File generated with SQLiteStudio v3.2.1 on dom abr 7 20:26:20 2019
 --
 -- Text encoding used: UTF-8
 --
-PRAGMA foreign_keys = on;
+PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
 
 -- Table: AlugFilme
@@ -98,7 +98,8 @@ CREATE TABLE Filme (
                                                                genero = 'ROMANCE' OR 
                                                                genero = 'TERROR' OR 
                                                                genero = 'DOCUMENTARIO' OR 
-                                                               genero = 'FANTASIA'),
+                                                               genero = 'FANTASIA' OR 
+                                                               genero = 'DRAMA'),
     duracao       INTEGER,
     idioma        TEXT    CONSTRAINT check_filme_idioma CHECK (idioma = 'PT' OR 
                                                                idioma = 'FR' OR 
