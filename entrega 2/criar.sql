@@ -1,7 +1,7 @@
 --
--- File generated with SQLiteStudio v3.2.1 on s�b abr 6 12:19:33 2019
+-- File generated with SQLiteStudio v3.2.1 on dom abr 7 15:26:13 2019
 --
--- Text encoding used: System
+-- Text encoding used: UTF-8
 --
 PRAGMA foreign_keys = on;
 BEGIN TRANSACTION;
@@ -91,24 +91,25 @@ CREATE TABLE Colecao (
 DROP TABLE IF EXISTS Filme;
 
 CREATE TABLE Filme (
-    idFilme       INTEGER  PRIMARY KEY,
-    nome          TEXT     CONSTRAINT nn_filme_nome NOT NULL,
-    genero        CHAR (1) CONSTRAINT check_filme_genero CHECK (genero = 'ACAO' OR 
-                                                                genero = 'COMEDIA' OR 
-                                                                genero = 'ROMANCE' OR 
-                                                                genero = 'TERROR' OR 
-                                                                genero = 'DOCUMENTARIO'),
-    duracao       TEXT,
-    idioma        TEXT     CONSTRAINT check_filme_idioma CHECK (idioma = 'PT' OR 
-                                                                idioma = 'FR' OR 
-                                                                idioma = 'EN' OR 
-                                                                idioma = 'ES' OR 
-                                                                idioma = 'JP'),
+    idFilme       INTEGER PRIMARY KEY,
+    nome          TEXT    CONSTRAINT nn_filme_nome NOT NULL,
+    genero        TEXT    CONSTRAINT check_filme_genero CHECK (genero = 'ACAO' OR 
+                                                               genero = 'COMEDIA' OR 
+                                                               genero = 'ROMANCE' OR 
+                                                               genero = 'TERROR' OR 
+                                                               genero = 'DOCUMENTARIO' OR 
+                                                               genero = 'FANTASIA'),
+    duracao       INTEGER,
+    idioma        TEXT    CONSTRAINT check_filme_idioma CHECK (idioma = 'PT' OR 
+                                                               idioma = 'FR' OR 
+                                                               idioma = 'EN' OR 
+                                                               idioma = 'ES' OR 
+                                                               idioma = 'JP'),
     anoLancamento INTEGER,
-    preco         REAL     CONSTRAINT nn_filme_preco NOT NULL
-                           CONSTRAINT check_filme_preco CHECK (preco > 0),
-    idColecao     INTEGER  CONSTRAINT fk_filme_idcolecao REFERENCES Colecao (idColecao) ON DELETE SET NULL
-                                                                                        ON UPDATE CASCADE
+    preco         REAL    CONSTRAINT nn_filme_preco NOT NULL
+                          CONSTRAINT check_filme_preco CHECK (preco > 0),
+    idColecao     INTEGER CONSTRAINT fk_filme_idcolecao REFERENCES Colecao (idColecao) ON DELETE SET NULL
+                                                                                       ON UPDATE CASCADE
 );
 
 
