@@ -1,7 +1,7 @@
 --
--- File generated with SQLiteStudio v3.2.1 on dom abr 7 20:26:20 2019
+-- File generated with SQLiteStudio v3.2.1 on ter abr 9 15:15:19 2019
 --
--- Text encoding used: UTF-8
+-- Text encoding used: System
 --
 PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
@@ -139,9 +139,10 @@ CREATE TABLE Horario (
                                                                    diaSemana = "QUINTA-FEIRA" OR 
                                                                    diaSemana = "SEXTA-FEIRA" OR 
                                                                    diaSemana = "SABADO" OR 
-                                                                   diaSemana = "DOMINGO") ),
-    horaInicio TIME,
-    horaFim    TIME,
+                                                                   diaSemana = "DOMINGO") ) 
+                       CONSTRAINT nn_horario_diasemana NOT NULL,
+    horaInicio TIME    CONSTRAINT nn_horario_horainicio NOT NULL,
+    horaFim    TIME    CONSTRAINT nn_horario_horafim NOT NULL,
     CONSTRAINT unique_horario_dia_horas UNIQUE (
         diaSemana,
         horaInicio,
