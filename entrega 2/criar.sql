@@ -1,44 +1,84 @@
 --
--- File generated with SQLiteStudio v3.2.1 on ter abr 9 15:15:19 2019
+-- File generated with SQLiteStudio v3.2.1 on qua abr 10 08:50:51 2019
 --
 -- Text encoding used: System
 --
-PRAGMA foreign_keys = off;
+PRAGMA foreign_keys = on;
 BEGIN TRANSACTION;
 
--- Table: AlugFilme
-DROP TABLE IF EXISTS AlugFilme;
+-- Table: Pessoa
+DROP TABLE IF EXISTS Pessoa;
 
-CREATE TABLE AlugFilme (
-    idAluguer INTEGER CONSTRAINT fk_alugfilme_idaluguer REFERENCES Aluguer (idAluguer) ON DELETE CASCADE
-                                                                                       ON UPDATE CASCADE,
-    idFilme   INTEGER CONSTRAINT fk_alugfilme_idfilme REFERENCES Filme (idFilme) ON DELETE CASCADE
-                                                                                 ON UPDATE CASCADE,
-    PRIMARY KEY (
-        idAluguer,
-        idFilme
-    )
+CREATE TABLE Pessoa (
+    idPessoa       INTEGER PRIMARY KEY,
+    nome           TEXT    CONSTRAINT nn_pessoa_nome NOT NULL,
+    dataNascimento DATE    CONSTRAINT nn_pessoa_datanascimento NOT NULL,
+    morada         TEXT,
+    telefone       INTEGER CONSTRAINT nn_pessoa_telefone NOT NULL
 );
 
 
--- Table: Aluguer
-DROP TABLE IF EXISTS Aluguer;
+-- Table: Horario
+DROP TABLE IF EXISTS Horario;
 
-CREATE TABLE Aluguer (
-    idAluguer    INTEGER PRIMARY KEY,
-    dataAluguer  DATE    CONSTRAINT nn_alugues_dataaluguer NOT NULL,
-    precoAluguer REAL,
-    idLoja       INTEGER CONSTRAINT fk_aluguer_idloja REFERENCES Loja (idLoja) ON DELETE CASCADE
-                                                                               ON UPDATE CASCADE,
-    idCliente    INTEGER CONSTRAINT fk_aluguer_idcliente REFERENCES Cliente (idPessoa) ON DELETE CASCADE
-                                                                                       ON UPDATE CASCADE,
-    dataLimite   DATE    CONSTRAINT nn_aluguer_datalimite NOT NULL,
-    dataEntrega  DATE,
-    CONSTRAINT check_aluguer_datas CHECK ( ( (dataLimite >= dataEntrega AND 
-                                              dataEntrega >= dataAluguer AND 
-                                              dataLimite >= dataAluguer) OR 
-                                             (dataLimite >= dataAluguer AND 
-                                              dataEntrega IS NULL) ) ) 
+CREATE TABLE Horario (
+    idHorario  INTEGER PRIMARY KEY,
+    diaSemana  TEXT    CONSTRAINT check_horario_diasemana CHECK ( (diaSemana = "SEGUNDA-FEIRA" OR 
+                                                                   diaSemana = "TERCA-FEIRA" OR 
+                                                                   diaSemana = "QUARTA-FEIRA" OR 
+                                                                   diaSemana = "QUINTA-FEIRA" OR 
+                                                                   diaSemana = "SEXTA-FEIRA" OR 
+                                                                   diaSemana = "SABADO" OR 
+                                                                   diaSemana = "DOMINGO") ) 
+                       CONSTRAINT nn_horario_diasemana NOT NULL,
+    horaInicio TIME    CONSTRAINT nn_horario_horainicio NOT NULL,
+    horaFim    TIME    CONSTRAINT nn_horario_horafim NOT NULL,
+    CONSTRAINT unique_horario_dia_horas UNIQUE (
+        diaSemana,
+        horaInicio,
+        horaFim
+    ),
+    CONSTRAINT check_horario_horas CHECK (horaFim > horaInicio) 
+);
+
+
+-- Table: Funcionario
+DROP TABLE IF EXISTS Funcionario;
+
+CREATE TABLE Funcionario (
+    idPessoa        INTEGER PRIMARY KEY
+                            CONSTRAINT fk_funcionario_idpessoa REFERENCES Pessoa (idPessoa) ON DELETE CASCADE
+                                                                                            ON UPDATE CASCADE,
+    salario         INTEGER CONSTRAINT nn_funcionario_salario NOT NULL,
+    dataContratacao DATE    CONSTRAINT nn_funcionario_datacontratacao NOT NULL
+);
+
+
+-- Table: Loja
+DROP TABLE IF EXISTS Loja;
+
+CREATE TABLE Loja (
+    idLoja    INTEGER PRIMARY KEY,
+    local     TEXT    CONSTRAINT unique_loja_local UNIQUE
+                      CONSTRAINT nn_loja_local NOT NULL,
+    telefone  INTEGER CONSTRAINT unique_loja_telefone UNIQUE,
+    idGerente INTEGER CONSTRAINT unique_loja_idgerente UNIQUE
+                      CONSTRAINT fk_loja_idgerente REFERENCES Funcionario (idPessoa) ON DELETE RESTRICT
+                                                                                     ON UPDATE CASCADE
+                      CONSTRAINT nn_loja_idgerente NOT NULL
+);
+
+
+-- Table: LojaFuncionario
+DROP TABLE IF EXISTS LojaFuncionario;
+
+CREATE TABLE LojaFuncionario (
+    idFuncionario INTEGER CONSTRAINT fk_lojafuncionario_idfuncionario REFERENCES Funcionario (idPessoa) ON DELETE CASCADE
+                                                                                                        ON UPDATE CASCADE
+                          PRIMARY KEY,
+    idLoja        INTEGER CONSTRAINT fk_lojafuncionario_idloja REFERENCES Loja (idLoja) ON DELETE CASCADE
+                                                                                        ON UPDATE CASCADE
+                          CONSTRAINT nn_lojafuncionario_idloja NOT NULL
 );
 
 
@@ -114,44 +154,6 @@ CREATE TABLE Filme (
 );
 
 
--- Table: Funcionario
-DROP TABLE IF EXISTS Funcionario;
-
-CREATE TABLE Funcionario (
-    idPessoa        INTEGER PRIMARY KEY
-                            CONSTRAINT fk_funcionario_idpessoa REFERENCES Pessoa (idPessoa) ON DELETE CASCADE
-                                                                                            ON UPDATE CASCADE,
-    salario         INTEGER CONSTRAINT nn_funcionario_salario NOT NULL,
-    idLoja          INTEGER CONSTRAINT fk_funcionario_idloja REFERENCES Loja (idLoja) ON DELETE SET NULL
-                                                                                      ON UPDATE CASCADE,
-    dataContratacao DATE    CONSTRAINT nn_funcionario_datacontratacao NOT NULL
-);
-
-
--- Table: Horario
-DROP TABLE IF EXISTS Horario;
-
-CREATE TABLE Horario (
-    idHorario  INTEGER PRIMARY KEY,
-    diaSemana  TEXT    CONSTRAINT check_horario_diasemana CHECK ( (diaSemana = "SEGUNDA-FEIRA" OR 
-                                                                   diaSemana = "TERCA-FEIRA" OR 
-                                                                   diaSemana = "QUARTA-FEIRA" OR 
-                                                                   diaSemana = "QUINTA-FEIRA" OR 
-                                                                   diaSemana = "SEXTA-FEIRA" OR 
-                                                                   diaSemana = "SABADO" OR 
-                                                                   diaSemana = "DOMINGO") ) 
-                       CONSTRAINT nn_horario_diasemana NOT NULL,
-    horaInicio TIME    CONSTRAINT nn_horario_horainicio NOT NULL,
-    horaFim    TIME    CONSTRAINT nn_horario_horafim NOT NULL,
-    CONSTRAINT unique_horario_dia_horas UNIQUE (
-        diaSemana,
-        horaInicio,
-        horaFim
-    ),
-    CONSTRAINT check_horario_horas CHECK (horaFim > horaInicio) 
-);
-
-
 -- Table: HorarioFunc
 DROP TABLE IF EXISTS HorarioFunc;
 
@@ -182,33 +184,6 @@ CREATE TABLE HorarioLoja (
 );
 
 
--- Table: Loja
-DROP TABLE IF EXISTS Loja;
-
-CREATE TABLE Loja (
-    idLoja    INTEGER PRIMARY KEY,
-    local     TEXT    CONSTRAINT unique_loja_local UNIQUE
-                      CONSTRAINT nn_loja_local NOT NULL,
-    telefone  INTEGER CONSTRAINT unique_loja_telefone UNIQUE,
-    idGerente INTEGER CONSTRAINT unique_loja_idgerente UNIQUE
-                      CONSTRAINT fk_loja_idgerente REFERENCES Funcionario (idPessoa) ON DELETE RESTRICT
-                                                                                     ON UPDATE CASCADE
-                      CONSTRAINT nn_loja_idgerente NOT NULL
-);
-
-
--- Table: Pessoa
-DROP TABLE IF EXISTS Pessoa;
-
-CREATE TABLE Pessoa (
-    idPessoa       INTEGER PRIMARY KEY,
-    nome           TEXT    CONSTRAINT nn_pessoa_nome NOT NULL,
-    dataNascimento DATE    CONSTRAINT nn_pessoa_datanascimento NOT NULL,
-    morada         TEXT,
-    telefone       INTEGER CONSTRAINT nn_pessoa_telefone NOT NULL
-);
-
-
 -- Table: Stock
 DROP TABLE IF EXISTS Stock;
 
@@ -220,6 +195,42 @@ CREATE TABLE Stock (
     numExemplares INTEGER CONSTRAINT check_stock_numexemplares CHECK (numExemplares > 0),
     PRIMARY KEY (
         idLoja,
+        idFilme
+    )
+);
+
+
+-- Table: Aluguer
+DROP TABLE IF EXISTS Aluguer;
+
+CREATE TABLE Aluguer (
+    idAluguer    INTEGER PRIMARY KEY,
+    dataAluguer  DATE    CONSTRAINT nn_alugues_dataaluguer NOT NULL,
+    precoAluguer REAL,
+    idLoja       INTEGER CONSTRAINT fk_aluguer_idloja REFERENCES Loja (idLoja) ON DELETE CASCADE
+                                                                               ON UPDATE CASCADE,
+    idCliente    INTEGER CONSTRAINT fk_aluguer_idcliente REFERENCES Cliente (idPessoa) ON DELETE CASCADE
+                                                                                       ON UPDATE CASCADE,
+    dataLimite   DATE    CONSTRAINT nn_aluguer_datalimite NOT NULL,
+    dataEntrega  DATE,
+    CONSTRAINT check_aluguer_datas CHECK ( ( (dataLimite >= dataEntrega AND 
+                                              dataEntrega >= dataAluguer AND 
+                                              dataLimite >= dataAluguer) OR 
+                                             (dataLimite >= dataAluguer AND 
+                                              dataEntrega IS NULL) ) ) 
+);
+
+
+-- Table: AlugFilme
+DROP TABLE IF EXISTS AlugFilme;
+
+CREATE TABLE AlugFilme (
+    idAluguer INTEGER CONSTRAINT fk_alugfilme_idaluguer REFERENCES Aluguer (idAluguer) ON DELETE CASCADE
+                                                                                       ON UPDATE CASCADE,
+    idFilme   INTEGER CONSTRAINT fk_alugfilme_idfilme REFERENCES Filme (idFilme) ON DELETE CASCADE
+                                                                                 ON UPDATE CASCADE,
+    PRIMARY KEY (
+        idAluguer,
         idFilme
     )
 );
