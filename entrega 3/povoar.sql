@@ -2281,7 +2281,7 @@ INSERT INTO Aluguer (
                         164,
                         '2019-04-04',
                         7.1,
-                        76423,
+                        71931,
                         84819,
                         '2019-04-20',
                         NULL
@@ -2304,6 +2304,44 @@ INSERT INTO Aluguer (
                         86177,
                         '2019-05-21',
                         NULL
+                    );
+
+INSERT INTO Aluguer (
+                        idAluguer,
+                        dataAluguer,
+                        precoAluguer,
+                        idLoja,
+                        idCliente,
+                        dataLimite,
+                        dataEntrega
+                    )
+                    VALUES (
+                        201,
+                        '2019-01-23',
+                        8.5,
+                        71931,
+                        89121,
+                        '2019-02-19',
+                        '2019-02-19'
+                    );
+
+INSERT INTO Aluguer (
+                        idAluguer,
+                        dataAluguer,
+                        precoAluguer,
+                        idLoja,
+                        idCliente,
+                        dataLimite,
+                        dataEntrega
+                    )
+                    VALUES (
+                        216,
+                        '2018-05-26',
+                        12.9,
+                        75621,
+                        85162,
+                        '2018-06-12',
+                        '2018-06-10'
                     );
 
 
@@ -2341,7 +2379,7 @@ INSERT INTO AlugFilme (
                       )
                       VALUES (
                           142,
-                          210
+                          122
                       );
 
 INSERT INTO AlugFilme (
@@ -2398,6 +2436,50 @@ INSERT INTO AlugFilme (
                           123
                       );
 
+INSERT INTO AlugFilme (
+                          idAluguer,
+                          idFilme
+                      )
+                      VALUES (
+                          201,
+                          177
+                      );
+
+INSERT INTO AlugFilme (
+                          idAluguer,
+                          idFilme
+                      )
+                      VALUES (
+                          201,
+                          181
+                      );
+
+INSERT INTO AlugFilme (
+                          idAluguer,
+                          idFilme
+                      )
+                      VALUES (
+                          216,
+                          122
+                      );
+
+INSERT INTO AlugFilme (
+                          idAluguer,
+                          idFilme
+                      )
+                      VALUES (
+                          216,
+                          216
+                      );
+
+INSERT INTO AlugFilme (
+                          idAluguer,
+                          idFilme
+                      )
+                      VALUES (
+                          216,
+                          213
+                      );
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
