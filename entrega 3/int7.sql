@@ -2,7 +2,6 @@
 .headers on
 .nullvalue NULL
 
-
 select (select count(*)
         from (select idPessoa from Cliente
               EXCEPT
