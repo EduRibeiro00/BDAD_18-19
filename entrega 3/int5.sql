@@ -3,24 +3,20 @@
 .nullvalue NULL
 
 create view auxAlugCount as
-    select Filme.nome, count(*) NumAlugueres
-    from AlugFilme, Aluguer, Filme
-    where AlugFilme.idAluguer = Aluguer.idAluguer
-    and AlugFilme.idFilme = Filme.idFilme
-    group by Filme.nome;
+    select idFilme, genero, nome, preco, count(*) as numAlugueres
+    from AlugFilme natural join Filme
+    group by idFilme;
 
-create view auxGeneroFilmeLucrativo as
-    select Filme.genero, Filme.nome NomeFilme, Filme.idFilme, max(Filme.preco * auxAlugCount.NumAlugueres) LucroFilme
-    from auxAlugCount, Filme
-    where Filme.nome = auxAlugCount.nome
-    group by Filme.genero;
+create view filmeMaisLucrativo as
+    select genero, nome, idFilme, max(preco * numAlugueres) as lucroFilme
+    from auxAlugCount
+    group by genero;
 
 
-select Filme.genero, sum(preco) SumPreco, avg(preco) AvgPreco, auxGeneroFilmeLucrativo.idFilme, auxGeneroFilmeLucrativo.NomeFilme
-from auxGeneroFilmeLucrativo, Filme
-where Filme.genero = auxGeneroFilmeLucrativo.genero
-group by Filme.genero;
+select genero, sum(preco) as sumPreco, avg(preco) as avgPreco, filmeMaisLucrativo.idFilme, filmeMaisLucrativo.nome
+from filmeMaisLucrativo join Filme using(genero)
+group by genero;
 
 
-drop view auxGeneroFilmeLucrativo;
+drop view filmeMaisLucrativo;
 drop view auxAlugCount;
