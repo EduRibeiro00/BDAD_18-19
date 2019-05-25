@@ -4,4 +4,4 @@
 
 PRAGMA foreign_keys = ON;
 
-DROP TRIGGER IF EXISTS trigger3;
+DROP TRIGGER IF EXISTS dataNascValida;
