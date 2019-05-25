@@ -39,7 +39,7 @@ END;
 
 
 
--- Verifica se, quando se adiciona um filme a um aluguer, se esse filme esta disponivel na loja
+-- Verifica, quando se adiciona um filme a um aluguer, se esse filme esta disponivel na loja
 CREATE TRIGGER IF NOT EXISTS checkStockLojaAluguer
 BEFORE INSERT ON AlugFilme
 FOR EACH ROW
