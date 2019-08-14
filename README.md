@@ -4,7 +4,7 @@
 >
 > **Course:** Bases de Dados ([BDAD](https://sigarra.up.pt/feup/pt/ucurr_geral.ficha_uc_view?pv_ocorrencia_id=419997)) | Databases
 >
-> **Project developed by:** Diogo Machado ([diogosmac](github.com/diogosmac)) and Eduardo Ribeiro ([EduRibeiro00](github.com/EduRibeiro00))
+> **Project developed by:** Diogo Machado ([diogosmac](https://github.com/diogosmac)) and Eduardo Ribeiro ([EduRibeiro00](https://github.com/EduRibeiro00))
 >
 > **Project 1st Delivery Grade:** 19/20
 >
